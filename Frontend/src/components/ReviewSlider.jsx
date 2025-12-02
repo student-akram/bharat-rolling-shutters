@@ -42,7 +42,7 @@ export default function ReviewsSlider() {
 
   // Fetch dynamic reviews from backend
   useEffect(() => {
-    fetch("http://localhost:1000/reviews/all")
+    fetch("https://bharat-rolling-shutters-sxgs.vercel.app/reviews/all")
       .then(res => res.json())
       .then(data => {
         // Convert backend data format into slider-compatible format

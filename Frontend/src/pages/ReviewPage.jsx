@@ -22,7 +22,7 @@ function ReviewPage() {
   const [rating, setRating] = useState(0);
 
   useEffect(() => {
-    fetch("http://localhost:1000/media/all")
+    fetch("https://bharat-rolling-shutters-sxgs.vercel.app/media/all")
       .then(res => res.json())
       .then(data => setMedia(data))
       .catch(err => console.log("Media Fetch Error:", err));

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getApiBase, parseListResponse } from "../utils/apiHelpers";
+import { getApiBase, parseListResponse } from "../utils/apiHelpers.js";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 // Swiper styles
@@ -45,10 +45,10 @@ export default function ReviewsSlider() {
   useEffect(() => {
     const API_BASE = getApiBase();
     fetch(`${API_BASE}/reviews/all`)
-      .then(res => parseListResponse(res))
+      .then((res) => parseListResponse(res))
       .then(data => {
-        // Convert backend data format into slider-compatible format
         const raw = data;
+        // Convert backend data format into slider-compatible format
         const formattedDynamicReviews = raw.map(r => ({
           name: r.name,
           location: r.location,

@@ -45,10 +45,10 @@ export default function ReviewsSlider() {
   useEffect(() => {
     const API_BASE = getApiBase();
     fetch(`${API_BASE}/reviews/all`)
-      .then((res) => parseListResponse(res))
+      .then(res => parseListResponse(res))
       .then(data => {
-        const raw = data;
         // Convert backend data format into slider-compatible format
+        const raw = data;
         const formattedDynamicReviews = raw.map(r => ({
           name: r.name,
           location: r.location,

@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { getApiBase, parseListResponse, parseAddResponse } from "../utils/apiHelpers.js";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -21,6 +22,33 @@ function ReviewPage() {
   const [count, setCount] = useState(1);
   const [message, setMessage] = useState("");
   const [rating, setRating] = useState(0);
+
+  const mediaCarouselResponsive = {
+  desktop: {
+    breakpoint: { max: 4000, min: 1024 },
+    items: 3,
+  },
+  tablet: {
+    breakpoint: { max: 1024, min: 768 },
+    items: 2,
+  },
+  mobile: {
+    breakpoint: { max: 768, min: 0 },
+    items: 1,
+  },
+};
+
+const MediaButtonGroup = ({ next, previous }) => (
+  <>
+    <button className="carousel-btn left" onClick={previous} aria-label="Previous">
+      ‹
+    </button>
+    <button className="carousel-btn right" onClick={next} aria-label="Next">
+      ›
+    </button>
+  </>
+);
+
 
   useEffect(() => {
     const API_BASE = getApiBase();
@@ -118,64 +146,70 @@ function ReviewPage() {
 
       {/* ----------------------- PHOTO SWIPER ----------------------- */}
       <h2 style={sectionTitle}>Project Photos</h2>
+      <div className="carousel-shell">
+        <Carousel
+          responsive={mediaCarouselResponsive}
+          infinite
+          arrows={false}
+          renderButtonGroupOutside
+          customButtonGroup={<MediaButtonGroup />}
+          partialVisible={false}
+          centerMode={false}
+          containerClass="carousel-container"
+          itemClass="carousel-item"
+        >
+          {media
+            .filter(item => item.type === "photo")
+            .map((item, index) => (
+              <div className="project-card" key={item._id || index}>
+                <div className="project-media">
+                  <img
+                    src={item.url}
+                    loading="lazy"
+                    alt={`${item.location || "project"} - photo`}
+                  />
+                </div>
+                <div className="project-text">
+                  <h3 className="project-location">{item.location}</h3>
+                  <p className="project-desc">{item.description}</p>
+                </div>
+              </div>
+            ))}
+        </Carousel>
+      </div>
 
-      <Swiper
-        modules={[Navigation, Pagination]}
-        navigation
-        pagination={{ clickable: true }}
-        spaceBetween={30}
-        slidesPerView={1}
-        style={{ padding: "20px", maxWidth: "1000px", margin: "0 auto" }}
-        className="swiper-container-centered"
-        breakpoints={{
-          768: { slidesPerView: 2 },
-          1024: { slidesPerView: 3 },
-        }}
-      >
-        {media.filter(item => item.type === "photo").map((item, index) => (
-          <SwiperSlide key={item._id || index}>
-            <div className="project-card" style={cardStyle}>
-              <div className="project-media">
-                <img src={item.url} loading="lazy" style={mediaStyle} alt={`${item.location || 'project'} - photo`} />
-              </div>
-              <div style={textBox}>
-                <h3 style={locationText}>{item.location}</h3>
-                <p style={descText}>{item.description}</p>
-              </div>
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
 
       {/* ----------------------- VIDEO SWIPER ----------------------- */}
       <h2 style={sectionTitle}>Project Videos</h2>
-
-      <Swiper
-        modules={[Navigation, Pagination]}
-        navigation
-        pagination={{ clickable: true }}
-        spaceBetween={30}
-        slidesPerView={1}
-        style={{ padding: "20px", maxWidth: "1000px", margin: "0 auto" }}
-        breakpoints={{
-          768: { slidesPerView: 2 },
-          1024: { slidesPerView: 3 },
-        }}
-      >
-        {media.filter(item => item.type === "video").map((item, index) => (
-          <SwiperSlide key={item._id || index}>
-            <div style={cardStyle}>
-              <video controls playsInline poster={item.thumbnail || ''} style={mediaStyle}>
-                <source src={item.url} />
-              </video>
-              <div style={textBox}>
-                <h3 style={locationText}>{item.location}</h3>
-                <p style={descText}>{item.description}</p>
+      <div className="carousel-shell">
+        <Carousel
+          responsive={mediaCarouselResponsive}
+          infinite
+          arrows={false}
+          renderButtonGroupOutside
+          customButtonGroup={<MediaButtonGroup />}
+          partialVisible={false}
+          centerMode={false}
+          containerClass="carousel-container"
+          itemClass="carousel-item"
+        >
+          {media
+            .filter(item => item.type === "video")
+            .map((item, index) => (
+              <div className="project-card" key={item._id || index}>
+                <div className="project-media">
+                  <video controls playsInline poster={item.thumbnail || ""}>
+                    <source src={item.url} />
+                  </video>
+                </div>
+                <div className="project-text">
+                  <h3 className="project-location">{item.location}</h3>
+                  <p className="project-desc">{item.description}</p>
+                </div>
               </div>
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+            ))}
+        </Carousel>
+      </div>
 
       {/* ----------------------- REVIEW POPUP ----------------------- */}
       {showForm && (

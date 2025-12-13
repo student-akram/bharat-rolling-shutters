@@ -25,14 +25,39 @@ function ReviewPage() {
     const API_BASE = import.meta.env.VITE_API_BASE_URL || import.meta.env.API_BASE_URL || '';
     fetch(`${API_BASE}/media/all`)
       .then(async (res) => {
+        // Defensive parsing: backend may return either raw array or an object wrapper
+        // Example valid responses:
+        // 1) [ { ... }, { ... } ]
+        // 2) { success: true, media: [ ... ] }
+        // 3) { success: true, data: [ ... ] }
         if (!res.ok) {
           const txt = await res.text();
           throw new Error(`Media fetch failed: ${res.status} ${res.statusText} - ${txt}`);
         }
-        return res.json();
+        const data = await res.json().catch(() => null);
+        return data;
       })
-      .then(data => {
-        const items = Array.isArray(data) ? data : (Array.isArray(data.media) ? data.media : (Array.isArray(data.data) ? data.data : []));
+      .then((data) => {
+        if (!data) {
+          setMedia([]);
+          return;
+        }
+
+        // normalize to an array of media objects
+        let items = [];
+        if (Array.isArray(data)) {
+          items = data;
+        } else if (Array.isArray(data.media)) {
+          items = data.media;
+        } else if (Array.isArray(data.data)) {
+          items = data.data;
+        } else if (Array.isArray(data.reviews)) {
+          // if we accidentally received the reviews endpoint, ignore (or transform)
+          items = data.reviews; // optional: you could map to UI shape if desired
+        } else {
+          console.warn("Unexpected media / reviews API response shape", data);
+        }
+
         setMedia(items);
       })
       .catch(err => console.log("Media Fetch Error:", err));

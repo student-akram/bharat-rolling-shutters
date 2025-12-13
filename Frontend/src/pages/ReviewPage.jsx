@@ -22,9 +22,19 @@ function ReviewPage() {
   const [rating, setRating] = useState(0);
 
   useEffect(() => {
-    fetch("https://bharat-rolling-shutters-sxgs.vercel.app/media/all")
-      .then(res => res.json())
-      .then(data => setMedia(data))
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || import.meta.env.API_BASE_URL || '';
+    fetch(`${API_BASE}/media/all`)
+      .then(async (res) => {
+        if (!res.ok) {
+          const txt = await res.text();
+          throw new Error(`Media fetch failed: ${res.status} ${res.statusText} - ${txt}`);
+        }
+        return res.json();
+      })
+      .then(data => {
+        const items = Array.isArray(data) ? data : (Array.isArray(data.media) ? data.media : (Array.isArray(data.data) ? data.data : []));
+        setMedia(items);
+      })
       .catch(err => console.log("Media Fetch Error:", err));
   }, []);
 
@@ -35,14 +45,15 @@ function ReviewPage() {
     }
 
     try {
-      const response = await fetch("http://localhost:1000/reviews/add", {
+      const API_BASE = import.meta.env.VITE_API_BASE_URL || import.meta.env.API_BASE_URL || '';
+      const response = await fetch(`${API_BASE}/reviews/add`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name,
           location,
           type,
-          count,
+          count: Number(count),
           rating,
           message
         })
@@ -50,7 +61,7 @@ function ReviewPage() {
 
       const data = await response.json();
 
-      if (data.success) {
+      if (response.ok && (data.success || data.review)) {
         toast.success("Review submitted successfully!");
 
         setShowForm(false);

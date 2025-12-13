@@ -52,8 +52,8 @@ export default function ReviewsSlider() {
         return res.json();
       })
       .then(data => {
-        // Convert backend data format into slider-compatible format
         const raw = Array.isArray(data) ? data : (Array.isArray(data.reviews) ? data.reviews : (Array.isArray(data.data) ? data.data : []));
+        // Convert backend data format into slider-compatible format
         const formattedDynamicReviews = raw.map(r => ({
           name: r.name,
           location: r.location,

@@ -313,13 +313,13 @@ body {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: #0B2A55;
-  color: #fff;
+  background: #0A2342;
+  color: white;
   border: none;
-  width: 46px;
-  height: 46px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  font-size: 28px;
+  font-size: 26px;
   cursor: pointer;
   z-index: 10;
 }
@@ -332,6 +332,41 @@ body {
   right: 10px;
 }
 
+/* Project text reused */
+.project-card {
+  margin: 15px;
+}
+
+.project-media img,
+.project-media video {
+  width: 400px;
+  height: 200px;
+  max-height: 420px;
+  object-fit: cover;
+  display: block;
+}
+
+.project-text {
+  padding: 10px 15px;
+}
+
+.project-location {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0A2342;
+}
+
+.project-desc {
+  font-size: 15px;
+  color: #444;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .carousel-shell {
+    padding: 0 20px;
+  }
+}
 
 /* Responsive header: show hamburger on small screens and hide desktop nav */
 @media (max-width: 768px) {

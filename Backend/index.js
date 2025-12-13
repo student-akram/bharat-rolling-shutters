@@ -48,12 +48,12 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-const DEFAULT_CONN = "mongodb+srv://bharatUser:Bharat123@cluster0.58wq6co.mongodb.net/BharatShuttersDB?retryWrites=true&w=majority";
-const connString = process.env.MONGODB_URI || DEFAULT_CONN;
+const connString = process.env.MONGODB_URI;
 const FAIL_ON_DB_CONNECT = process.env.FAIL_ON_DB_CONNECT !== 'false';
 
-if (!process.env.MONGODB_URI) {
-  console.warn('⚠️ Warning: `MONGODB_URI` not set in environment; using built-in default string.');
+if (!connString) {
+  console.error('❌ CRITICAL: `MONGODB_URI` environment variable is required but not set.');
+  process.exit(1);
 }
 
 function maskUri(uri) {

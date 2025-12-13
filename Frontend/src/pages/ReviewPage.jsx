@@ -26,28 +26,8 @@ function ReviewPage() {
     const API_BASE = getApiBase();
     fetch(`${API_BASE}/media/all`)
       .then(res => parseListResponse(res))
-      .then((data) => {
-        if (!data) {
-          setMedia([]);
-          return;
-        }
-
-        // normalize to an array of media objects
-        let items = [];
-        if (Array.isArray(data)) {
-          items = data;
-        } else if (Array.isArray(data.media)) {
-          items = data.media;
-        } else if (Array.isArray(data.data)) {
-          items = data.data;
-        } else if (Array.isArray(data.reviews)) {
-          // if we accidentally received the reviews endpoint, ignore (or transform)
-          items = data.reviews; // optional: you could map to UI shape if desired
-        } else {
-          console.warn("Unexpected media / reviews API response shape", data);
-        }
-
-        setMedia(items);
+      .then(data => {
+        setMedia(data);
       })
       .catch(err => {
         console.error("Media Fetch Error:", err);

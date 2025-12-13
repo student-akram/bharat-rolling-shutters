@@ -63,7 +63,7 @@ export default function Header() {
       >
         <Link to="/" className="mobile-link" onClick={() => setOpen(false)}>Home</Link>
         <Link to="/services" className="mobile-link" onClick={() => setOpen(false)}>Services</Link>
-        <Link to="/reviewsdetail" className="mobile-link" onClick={() => setOpen(false)}>Reviews</Link>
+        <Link to="/reviewsdetail" className="mobile-link" onClick={() => setOpen(false)}>Projects</Link>
         <Link to="/contact" className="mobile-link" onClick={() => setOpen(false)}>Contact</Link>
       </div>
 

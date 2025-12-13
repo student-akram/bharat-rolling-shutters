@@ -43,7 +43,7 @@ body {
 .hero-sub {
   font-size: 22px;
   margin-top: 12px;
-  Opacity: 0.9;
+  opacity: 0.9;
 }
 
 /* SECTION TITLE */
@@ -76,16 +76,6 @@ body {
   box-shadow: 0 5px 30px rgba(0,0,0,0.1);
 }
 
-/* ANIMATIONS */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
 /* NAVIGATION LINKS */
 .nav-link {
   color: white;
@@ -94,6 +84,7 @@ body {
   font-size: 16px;
   font-weight: 500;
 }
+
 .nav-link:hover {
   color: #d0e4ff;
 }
@@ -131,18 +122,7 @@ body {
   color: #d0e4ff;
 }
 
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  .desktop-menu {
-    display: none;
-  }
-  .menu-btn {
-    display: block;
-  }
-  .mobile-menu {
-    display: flex;
-  }
-}
+/* REVIEW SWIPER */
 .input-box {
   width: 100%;
   padding: 12px;
@@ -156,45 +136,16 @@ body {
   border-color: #0B2A55;
   box-shadow: 0 0 5px rgba(11,42,85,0.3);
 }
-/* Position left/right arrows properly */
-.swiper-button-prev,
-.swiper-button-next {
-  color: #0B2A55;          /* dark blue */
-  font-weight: bold;
-  top: 45%;                /* vertical alignment */
-  transform: translateY(-50%);
-}
 
-.swiper-button-prev {
-  left: 10px;              /* adjust left arrow position */
-}
-
-.swiper-button-next {
-  right: 10px;             /* adjust right arrow position */
-}
-
-/* Optional: Bigger arrows */
-.swiper-button-prev::after,
-.swiper-button-next::after {
-  font-size: 28px;         /* arrow size */
-}
-
-/* IMPORTANT: This defines the positioning area for arrows */
-.review-slider-wrapper {
-  position: relative;
-  padding: 40px 0;
-}
-
-/* FIX THE ARROW POSITION */
+/* Swiper Arrows */
 .swiper-button-prev,
 .swiper-button-next {
   color: #0B2A55 !important;
-  top: 50% !important;                /* perfectly centered */
+  top: 50% !important;
   transform: translateY(-50%) !important;
   z-index: 10 !important;
 }
 
-/* Position left/right */
 .swiper-button-prev {
   left: 5px !important;
 }
@@ -203,16 +154,102 @@ body {
   right: 5px !important;
 }
 
-/* Bigger & clearer arrows */
 .swiper-button-prev::after,
 .swiper-button-next::after {
   font-size: 32px !important;
   font-weight: bold;
 }
+
 .review-card {
-  height: 260px;           /* fixed height for all cards */
+  height: 260px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
+/* ---------------------------- */
+/* 📱 SMALL MOBILE RESPONSIVE   */
+/* ---------------------------- */
+@media (max-width: 480px) {
+
+  .hero {
+    padding: 80px 15px;
+  }
+
+  .hero-title {
+    font-size: 30px;
+    line-height: 38px;
+  }
+
+  .hero-sub {
+    font-size: 16px;
+  }
+
+  .section-title {
+    font-size: 22px;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .service-card {
+    padding: 16px;
+  }
+
+  .swiper-button-prev,
+  .swiper-button-next {
+    display: none;  /* hide arrows on tiny screens */
+  }
+
+  .desktop-menu {
+    display: none;
+  }
+
+  .menu-btn {
+    display: block;
+  }
+
+  .mobile-menu {
+    display: flex;
+  }
+}
+
+/* ---------------------------- */
+/* 📲 MEDIUM TABLET RESPONSIVE   */
+/* ---------------------------- */
+@media (min-width: 481px) and (max-width: 768px) {
+
+  .hero {
+    padding: 100px 20px;
+  }
+
+  .hero-title {
+    font-size: 36px;
+  }
+
+  .hero-sub {
+    font-size: 18px;
+  }
+
+  .services-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .desktop-menu {
+    display: none;
+  }
+
+  .menu-btn {
+    display: block;
+  }
+
+  .mobile-menu {
+    display: none; /* open only on click */
+  }
+
+  .swiper-button-prev::after,
+  .swiper-button-next::after {
+    font-size: 24px !important;
+  }
+}

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { getApiBase, parseListResponse, parseAddResponse } from "../utils/apiHelpers";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -22,21 +23,9 @@ function ReviewPage() {
   const [rating, setRating] = useState(0);
 
   useEffect(() => {
-    const API_BASE = import.meta.env.VITE_API_BASE_URL || import.meta.env.API_BASE_URL || '';
+    const API_BASE = getApiBase();
     fetch(`${API_BASE}/media/all`)
-      .then(async (res) => {
-        // Defensive parsing: backend may return either raw array or an object wrapper
-        // Example valid responses:
-        // 1) [ { ... }, { ... } ]
-        // 2) { success: true, media: [ ... ] }
-        // 3) { success: true, data: [ ... ] }
-        if (!res.ok) {
-          const txt = await res.text();
-          throw new Error(`Media fetch failed: ${res.status} ${res.statusText} - ${txt}`);
-        }
-        const data = await res.json().catch(() => null);
-        return data;
-      })
+      .then(res => parseListResponse(res))
       .then((data) => {
         if (!data) {
           setMedia([]);
@@ -60,7 +49,10 @@ function ReviewPage() {
 
         setMedia(items);
       })
-      .catch(err => console.log("Media Fetch Error:", err));
+      .catch(err => {
+        console.error("Media Fetch Error:", err);
+        toast.error("Failed to load media. Please check the console or try again later.");
+      });
   }, []);
 
   const submitReview = async () => {
@@ -70,7 +62,7 @@ function ReviewPage() {
     }
 
     try {
-      const API_BASE = import.meta.env.VITE_API_BASE_URL || import.meta.env.API_BASE_URL || '';
+      const API_BASE = getApiBase();
       const response = await fetch(`${API_BASE}/reviews/add`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -84,9 +76,10 @@ function ReviewPage() {
         })
       });
 
-      const data = await response.json();
+      const resParsed = await parseAddResponse(response);
+      const data = resParsed.data;
 
-      if (response.ok && (data.success || data.review)) {
+      if (resParsed.ok && (data && (data.success || data.review))) {
         toast.success("Review submitted successfully!");
 
         setShowForm(false);

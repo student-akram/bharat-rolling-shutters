@@ -8,7 +8,38 @@ const mediaRoutes = require("./routes/mediaRoutes");
 
 const app = express();
 
-app.use(cors());
+// CORS configuration
+// If `CORS_ORIGIN` is set it will be used as the allowed origin and
+// credentials will be allowed. Otherwise we fall back to open public CORS
+// (no credentials) to avoid wildcard + credentials conflicts.
+const corsOrigin = process.env.CORS_ORIGIN || '*';
+const allowCredentials = !!process.env.CORS_ORIGIN; // true only when a specific origin is provided
+const corsOptions = {
+  origin: corsOrigin,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
+  exposedHeaders: ['Content-Range', 'X-Total-Count'],
+  credentials: allowCredentials,
+  maxAge: 86400, // cache preflight for 24 hours
+};
+
+app.use(cors(corsOptions));
+// Explicitly handle OPTIONS (preflight) requests without relying on
+// a wildcard route pattern which may be rejected by path-to-regexp.
+app.use((req, res, next) => {
+  if (req.method !== 'OPTIONS') return next();
+  // Set CORS preflight response headers
+  res.setHeader('Access-Control-Allow-Origin', corsOrigin);
+  res.setHeader('Access-Control-Allow-Methods', corsOptions.methods.join(','));
+  res.setHeader('Access-Control-Allow-Headers', corsOptions.allowedHeaders.join(','));
+  if (allowCredentials) res.setHeader('Access-Control-Allow-Credentials', 'true');
+  if (corsOptions.exposedHeaders && corsOptions.exposedHeaders.length) {
+    res.setHeader('Access-Control-Expose-Headers', corsOptions.exposedHeaders.join(','));
+  }
+  res.setHeader('Access-Control-Max-Age', String(corsOptions.maxAge || 0));
+  return res.sendStatus(204);
+});
+
 app.use(express.json());
 
 const DEFAULT_CONN = "mongodb+srv://bharatUser:Bharat123@cluster0.58wq6co.mongodb.net/BharatShuttersDB?retryWrites=true&w=majority";

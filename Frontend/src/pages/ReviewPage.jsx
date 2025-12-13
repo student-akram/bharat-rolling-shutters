@@ -18,7 +18,7 @@ function ReviewPage() {
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const [type, setType] = useState("");
-  const [count, setCount] = useState("");
+  const [count, setCount] = useState(1);
   const [message, setMessage] = useState("");
   const [rating, setRating] = useState(0);
 
@@ -83,7 +83,13 @@ function ReviewPage() {
         toast.success("Review submitted successfully!");
 
         setShowForm(false);
-
+        // reset fields
+        setName("");
+        setLocation("");
+        setType("");
+        setCount(1);
+        setMessage("");
+        setRating(0);
         setTimeout(() => {
           navigate("/");
         }, 1200);
@@ -105,6 +111,7 @@ function ReviewPage() {
       <button
         onClick={() => setShowForm(true)}
         style={reviewButton}
+        aria-label="Write a review"
       >
         Write a Review
       </button>
@@ -118,16 +125,19 @@ function ReviewPage() {
         pagination={{ clickable: true }}
         spaceBetween={30}
         slidesPerView={1}
-        style={{ padding: "20px", maxWidth: "1000px" }}
+        style={{ padding: "20px", maxWidth: "1000px", margin: "0 auto" }}
+        className="swiper-container-centered"
         breakpoints={{
           768: { slidesPerView: 2 },
           1024: { slidesPerView: 3 },
         }}
       >
         {media.filter(item => item.type === "photo").map((item, index) => (
-          <SwiperSlide key={index}>
-            <div style={cardStyle}>
-              <img src={item.url} style={mediaStyle} alt="project" />
+          <SwiperSlide key={item._id || index}>
+            <div className="project-card" style={cardStyle}>
+              <div className="project-media">
+                <img src={item.url} loading="lazy" style={mediaStyle} alt={`${item.location || 'project'} - photo`} />
+              </div>
               <div style={textBox}>
                 <h3 style={locationText}>{item.location}</h3>
                 <p style={descText}>{item.description}</p>
@@ -146,16 +156,16 @@ function ReviewPage() {
         pagination={{ clickable: true }}
         spaceBetween={30}
         slidesPerView={1}
-        style={{ padding: "20px", maxWidth: "1000px" }}
+        style={{ padding: "20px", maxWidth: "1000px", margin: "0 auto" }}
         breakpoints={{
           768: { slidesPerView: 2 },
           1024: { slidesPerView: 3 },
         }}
       >
         {media.filter(item => item.type === "video").map((item, index) => (
-          <SwiperSlide key={index}>
+          <SwiperSlide key={item._id || index}>
             <div style={cardStyle}>
-              <video controls style={mediaStyle}>
+              <video controls playsInline poster={item.thumbnail || ''} style={mediaStyle}>
                 <source src={item.url} />
               </video>
               <div style={textBox}>
@@ -172,37 +182,53 @@ function ReviewPage() {
         <div style={overlay}>
           <div style={popup}>
 
-            <button onClick={() => setShowForm(false)} style={closeBtn}>✕</button>
+            <button onClick={() => { setShowForm(false); setName(""); setLocation(""); setType(""); setCount(1); setMessage(""); setRating(0); }} style={closeBtn} aria-label="Close review form">✕</button>
 
             <h2 style={formTitle}>Write Your Review</h2>
 
             <input placeholder="Your Name *" style={input}
+              value={name}
               onChange={(e) => setName(e.target.value)} />
 
             <input placeholder="Your Location *" style={input}
+              value={location}
               onChange={(e) => setLocation(e.target.value)} />
 
             <input placeholder="How many shutters? *" style={input}
-              onChange={(e) => setCount(e.target.value)} />
+              type="number" min={1}
+              value={count}
+              onChange={(e) => setCount(Number(e.target.value))} />
 
-            <select style={input} onChange={(e) => setType(e.target.value)}>
+            <select style={input} value={type} onChange={(e) => setType(e.target.value)}>
               <option value="">Select Type *</option>
               <option value="New Installation">New Installation</option>
               <option value="Repaired">Repaired</option>
               <option value="Both">Both</option>
             </select>
 
-            <div style={{ display: "flex", justifyContent: "center", margin: "10px 0" }}>
+            <div role="radiogroup" aria-label="Rating" style={{ display: "flex", justifyContent: "center", margin: "10px 0" }}>
               {[1, 2, 3, 4, 5].map(star => (
                 <span
                   key={star}
+                  role="radio"
+                  tabIndex={0}
+                  aria-checked={rating === star}
                   style={{
-                    fontSize: "30px",
+                    fontSize: "28px",
                     margin: "0 5px",
                     cursor: "pointer",
-                    color: rating >= star ? "#FFD700" : "#ccc"
+                    color: rating >= star ? "#FFD700" : "#ccc",
+                    outline: rating === star ? "2px solid rgba(255,215,0,0.2)" : "none",
+                    borderRadius: "4px",
+                    padding: "2px",
                   }}
                   onClick={() => setRating(star)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setRating(star);
+                    }
+                  }}
                 >
                   ★
                 </span>
@@ -210,9 +236,15 @@ function ReviewPage() {
             </div>
 
             <textarea placeholder="Your Message (optional)" style={textarea}
+              value={message}
               onChange={(e) => setMessage(e.target.value)} />
 
-            <button onClick={submitReview} style={submitBtn}>
+            <button
+              onClick={submitReview}
+              style={( !name || !location || !type || !count || rating === 0) ? { ...submitBtn, opacity: 0.6, cursor: 'not-allowed' } : submitBtn }
+              disabled={!name || !location || !type || !count || rating === 0}
+              aria-disabled={!name || !location || !type || !count || rating === 0}
+            >
               Submit Review
             </button>
 
@@ -255,9 +287,10 @@ const cardStyle = {
 
 const mediaStyle = {
   width: "100%",
-  height: "220px",
+  height: "clamp(180px, 24vh, 320px)",
   objectFit: "cover",
   borderRadius: "12px 12px 0 0",
+  display: "block",
 };
 
 const textBox = { padding: "10px 15px" };
@@ -287,6 +320,7 @@ const closeBtn = {
   background: "none", border: "none", fontSize: "22px",
   cursor: "pointer", color: "#333"
 };
+
 
 const formTitle = { fontSize: "22px", color: "#0A2342", marginBottom: "15px" };
 

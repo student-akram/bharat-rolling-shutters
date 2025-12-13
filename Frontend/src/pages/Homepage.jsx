@@ -7,19 +7,7 @@ export default function Homepage() {
     <div>
 
       {/* HERO BANNER */}
-      <section
-        style={{
-          padding: "150px 20px",
-          background: `
-            linear-gradient(rgba(11,42,85,0.85), rgba(11,42,85,0.85)),
-            url('/path-to-your-image.jpg')
-          `,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          color: "white",
-          textAlign: "center"
-        }}
+      <section className="hero"
       >
         <h1
           style={{

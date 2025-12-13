@@ -5,11 +5,6 @@
   --text-light: #ffffff;
   --text-dark: #0a0a0a;
   --bg: #f8f9fc;
-  --container-padding: 20px;
-  --hero-padding: 120px;
-  --hero-title-size: clamp(28px, 3.5vw, 48px);
-  --hero-sub-size: clamp(14px, 1.8vw, 22px);
-  --section-title-size: clamp(20px, 2.5vw, 30px);
 }
 
 /* GLOBAL */
@@ -25,35 +20,39 @@ body {
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: var(--container-padding);
+  padding: 20px;
 }
 
 /* HERO SECTION */
 .hero {
-  background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
-              url('https://images.unsplash.com/photo-1523415829731-063a4c97fe8d?auto=format&fit=crop&w=1400&q=60');
+  height: 40vh;
+  background-image: url('https://images.unsplash.com/photo-1620937991273-a53ee320ff12?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzJ8fHNodXR0ZXIlMjBtYW51ZmFjdHVyZXJzfGVufDB8MHwwfHx8MA%3D%3D');
   background-size: cover;
   background-position: center;
-  padding: var(--hero-padding) 20px;
+  padding: 120px;
+  object-fit: cover;
   text-align: center;
   color: var(--text-light);
   animation: fadeIn 1.5s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .hero-title {
-  font-size: var(--hero-title-size);
+  font-size: 48px;
   font-weight: 700;
 }
 
 .hero-sub {
-  font-size: var(--hero-sub-size);
+  font-size: 22px;
   margin-top: 12px;
-  Opacity: 0.9;
+  opacity: 0.9;
 }
 
 /* SECTION TITLE */
 .section-title {
-  font-size: var(--section-title-size);
+  font-size: 30px;
   font-weight: 700;
   margin-bottom: 10px;
   color: var(--primary);
@@ -81,73 +80,194 @@ body {
   box-shadow: 0 5px 30px rgba(0,0,0,0.1);
 }
 
-/* ANIMATIONS */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Contact grid responsive */
+.contact-grid {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
 }
 
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Header */
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0px 20px;
 }
+
+.logo{
+  height: auto;
+  max-height: 58px;
+}
+
+/* Header container and theming */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 120;
+  background: var(--primary);
+  color: var(--text-light);
+}
+
+.site-header .nav-link { color: var(--text-light); }
+.site-header .mobile-link { color: var(--text-light); }
+
 /* NAVIGATION LINKS */
 .nav-link {
-  color: white;
-  margin-left: 25px;
+  color: black;
   text-decoration: none;
-  font-size: 16px;
   font-weight: 500;
+  font-size: 24px;
 }
+
 .nav-link:hover {
   color: #d0e4ff;
 }
 
 .desktop-menu {
   display: flex;
-  align-items: center;
+  gap: 24px;
+}
+
+.site-header .desktop-menu { gap: 16px; }
+
+/* PROJECT CARD --- used by ReviewPage "project-card" and the ReviewSlider cards */
+.project-card {
+  background: #fff;
+  padding-bottom: 10px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.09);
+  overflow: hidden;
+  border-top: 4px solid var(--primary);
+}
+
+.project-media img,
+.project-media video {
+  width: 100%;
+  height: auto;
+  max-height: 420px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Center the Swiper container contents and make them responsive */
+
+.reviews-swiper-container {
+  position: relative;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 48px;         /* ⬅ space for arrows */
+}
+
+.reviews-swiper-container .swiper {
+  overflow: hidden;
+}
+
+.swiper-container-centered {
+  max-width: 1100px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+/* Center cards */
+.swiper-slide {
+  display: flex;
+  justify-content: center;
+}
+
+/* Card width */
+.review-card {
+  width: 100%;
+  max-width: 320px;
+}
+
+/* Move arrows outside card area */
+.reviews-swiper-container .swiper-button-prev {
+  left: -36px;
+}
+
+.reviews-swiper-container .swiper-button-next {
+  right: 0;
+}
+
+/* Arrow size */
+.swiper-button-prev::after,
+.swiper-button-next::after {
+  font-size: 28px;
+}
+
+/* Make review cards wrap nicely and reduce fixed height on small screens */
+/* Card width */
+.review-card {
+  width: 100%;
+  max-width: 320px;
+}
+
+/* Move arrows outside card area */
+.reviews-swiper-container .swiper-button-prev {
+  left: 0;
+}
+
+.reviews-swiper-container .swiper-button-next {
+  right: 0;
 }
 
 /* MOBILE MENU */
 .menu-btn {
   display: none;
+  flex-direction: column;
+  gap: 6px;
   background: none;
   border: none;
-  font-size: 26px;
-  color: white;
   cursor: pointer;
 }
 
-.mobile-menu {
-  display: none;
-  flex-direction: column;
-  background-color: #0B2A55;
-  padding: 15px;
+
+.menu-btn span {
+  width: 26px;
+  height: 3px;
+  background: white;
+  transition: transform 0.25s ease, opacity 0.25s ease;
 }
 
+/* Hamburger animation */
+.menu-btn.open span:nth-child(1) {
+  transform: translateY(9px) rotate(45deg);
+}
+.menu-btn.open span:nth-child(2) {
+  opacity: 0;
+}
+.menu-btn.open span:nth-child(3) {
+  transform: translateY(-9px) rotate(-45deg);
+}
+.mobile-menu {
+  overflow: hidden;
+  max-height: 0;
+  background: var(--primary);
+  transition: max-height 0.35s ease;
+}
+
+.mobile-menu.open {
+  max-height: 300px;
+}
 .mobile-link {
-  padding: 10px 0;
+  display: block;
+  padding: 14px 22px;
   color: white;
   text-decoration: none;
-  border-bottom: 1px solid #1F4C8F;
+  border-bottom: 1px solid var(--primary-light);
+}
+
+.mobile-link:last-child {
+  border-bottom: none;
 }
 
 .mobile-link:hover {
-  color: #d0e4ff;
+  background: var(--primary-light);
 }
 
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  .desktop-menu {
-    display: none;
-  }
-  .menu-btn {
-    display: block;
-  }
-  .mobile-menu {
-    display: flex;
-  }
-}
+/* REVIEW SWIPER */
 .input-box {
   width: 100%;
   padding: 12px;
@@ -161,135 +281,86 @@ body {
   border-color: #0B2A55;
   box-shadow: 0 0 5px rgba(11,42,85,0.3);
 }
-/* Position left/right arrows properly */
-.swiper-button-prev,
-.swiper-button-next {
-  color: #0B2A55;          /* dark blue */
-  font-weight: bold;
-  top: 45%;                /* vertical alignment */
-  transform: translateY(-50%);
-}
 
-.swiper-button-prev {
-  left: 10px;              /* adjust left arrow position */
-}
-
-.swiper-button-next {
-  right: 10px;             /* adjust right arrow position */
-}
-
-/* Optional: Bigger arrows */
-.swiper-button-prev::after,
-.swiper-button-next::after {
-  font-size: 28px;         /* arrow size */
-}
-
-/* IMPORTANT: This defines the positioning area for arrows */
-.review-slider-wrapper {
+/* Outer wrapper */
+.carousel-shell {
   position: relative;
-  padding: 40px 0;
+  max-width: 1200px;
+  margin: 0 auto 50px auto;
+  padding: 0 60px; /* space for arrows */
 }
 
-/* FIX THE ARROW POSITION */
-.swiper-button-prev,
-.swiper-button-next {
-  color: #0B2A55 !important;
-  top: 50% !important;                /* perfectly centered */
-  transform: translateY(-50%) !important;
-  z-index: 10 !important;
+.carousel-container {
+  overflow: hidden;
 }
 
-/* Position left/right */
-.swiper-button-prev {
-  left: 5px !important;
-}
-
-.swiper-button-next {
-  right: 5px !important;
-}
-
-/* Bigger & clearer arrows */
-.swiper-button-prev::after,
-.swiper-button-next::after {
-  font-size: 32px !important;
-  font-weight: bold;
-}
-.review-card {
-  height: 260px;           /* fixed height for desktop; will unset on small screens */
+.carousel-item {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
 }
 
-/* --------------------------- RESPONSIVE BREAKPOINTS --------------------------- */
-/* Large screens (<= 1200px) */
-@media (max-width: 1200px) {
-  :root { --container-padding: 18px; --hero-padding: 100px; }
-  .hero-title { font-size: clamp(30px, 3.3vw, 42px); }
-  .section-title { font-size: clamp(20px, 2.2vw, 26px); }
+.review-card {
+  width: 100%;
+  max-width: 300px;
+  background: #fff;
+  padding: 22px;
+  border-radius: 14px;
+  box-shadow: 0 0px 12px rgba(0,0,0,0.1);
 }
 
-/* Tablets (<= 992px) */
-@media (max-width: 992px) {
-  :root { --container-padding: 16px; --hero-padding: 80px; }
-  .hero-title { font-size: clamp(26px, 4vw, 36px); }
-  .hero-sub { font-size: clamp(12px, 2.4vw, 18px); }
-  .section-title { font-size: clamp(18px, 3vw, 24px); }
-  .review-slider-wrapper { padding: 30px 0; }
-  .swiper-button-prev::after, .swiper-button-next::after { font-size: 26px; }
+/* arrows */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #0B2A55;
+  color: #fff;
+  border: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  font-size: 28px;
+  cursor: pointer;
+  z-index: 10;
 }
 
-/* Mobile (<= 768px) */
+.carousel-btn.left {
+  left: 10px;
+}
+
+.carousel-btn.right {
+  right: 10px;
+}
+
+
+/* Responsive header: show hamburger on small screens and hide desktop nav */
 @media (max-width: 768px) {
-  :root { --container-padding: 14px; --hero-padding: 60px; }
-  body { font-size: 15px; }
-  .hero { padding: var(--hero-padding) 14px; }
-  .hero-title { font-size: clamp(22px, 5vw, 32px); }
-  .hero-sub { font-size: clamp(12px, 2.8vw, 16px); }
-  .section-title { font-size: clamp(16px, 3.5vw, 22px); }
-  .services-grid { gap: 12px; }
-  .service-card { padding: 16px; }
-  .review-card { height: auto; padding: 18px; }
-  .mediaStyle, img, video { height: auto; max-height: 180px; }
-  .menu-btn { display: block; }
   .desktop-menu { display: none; }
-  .swiper-button-prev, .swiper-button-next { top: 40% !important; transform: translateY(-40%) !important; font-size: 22px !important; }
-  .swiper-button-prev { left: 0 !important; }
-  .swiper-button-next { right: 0 !important; }
+  .menu-btn { display: flex; }
+  /* make header smaller */
+  .site-header .logo { max-height: 48px; }
+  .site-header .nav-link { font-size: 16px; }
 }
 
-/* Small mobile (<= 480px) */
 @media (max-width: 480px) {
-  :root { --container-padding: 12px; --hero-padding: 48px; }
-  body { font-size: 14px; }
-  .hero { padding: var(--hero-padding) 10px; }
-  .hero-title { font-size: clamp(20px, 6vw, 28px); }
-  .hero-sub { font-size: clamp(12px, 3vw, 15px); }
-  .section-title { font-size: clamp(14px, 4vw, 20px); }
-  .review-slider-wrapper { padding: 20px 0; }
-  .swiper-button-prev::after, .swiper-button-next::after { font-size: 20px !important; }
-  .review-card { height: auto; }
-  .input-box { padding: 10px; font-size: 14px; }
-}
-
-/* Make the swiper arrows easier to click and not overlap cards on mobile */
-@media (max-width: 636px) {
-  .swiper-button-prev, .swiper-button-next {
-    width: 32px;
-    height: 32px;
-    background: rgba(255,255,255,0.9);
-    border-radius: 50%;
-    color: var(--primary) !important;
+  .site-header .logo { max-height: 42px; }
+  .nav-link { font-size: 14px; }
+  .hero {
+    height: 50vh;
+    padding: 80px 20px;
+  }
+  .hero-title { font-size: 32px; }
+  .hero-sub { font-size: 18px; }
+  .contact-grid {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    flex-direction: column;
+  }
+  .swiper-button-prev,
+  .swiper-button-next {
+    display: none;
+  }
+
+  .reviews-swiper-container {
+    padding: 0;  /* full width on mobile */
   }
 }
-
-/* Forms and cards should not overflow on smaller screens */
-@media (max-width: 420px) {
-  .popup, .cardStyle, .service-card { padding: 12px !important; }
-  .popup { max-width: 92% !important; }
-}
-

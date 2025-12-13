@@ -151,6 +151,20 @@ body {
   display: block;
 }
 
+.project-media.video-wrapper {
+  width: 100%;
+  aspect-ratio: 16 / 9;   /* 🔒 uniform size */
+  background: #000;
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;
+}
+
+.project-media.video-wrapper video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;      /* fills without distortion */
+}
+
 /* Center the Swiper container contents and make them responsive */
 
 .reviews-swiper-container {

@@ -197,7 +197,7 @@ const MediaButtonGroup = ({ next, previous }) => (
             .filter(item => item.type === "video")
             .map((item, index) => (
               <div className="project-card" key={item._id || index}>
-                <div className="project-media">
+                <div className="project-media video-wrapper">
                   <video controls playsInline poster={item.thumbnail || ""}>
                     <source src={item.url} />
                   </video>

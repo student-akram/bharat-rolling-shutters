@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { getApiBase, parseListResponse, parseAddResponse } from "../utils/apiHelpers.js";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -22,10 +23,36 @@ function ReviewPage() {
   const [rating, setRating] = useState(0);
 
   useEffect(() => {
-    fetch("https://bharat-rolling-shutters-sxgs.vercel.app/media/all")
-      .then(res => res.json())
-      .then(data => setMedia(data))
-      .catch(err => console.log("Media Fetch Error:", err));
+    const API_BASE = getApiBase();
+    fetch(`${API_BASE}/media/all`)
+      .then(res => parseListResponse(res))
+      .then((data) => {
+        if (!data) {
+          setMedia([]);
+          return;
+        }
+
+        // normalize to an array of media objects
+        let items = [];
+        if (Array.isArray(data)) {
+          items = data;
+        } else if (Array.isArray(data.media)) {
+          items = data.media;
+        } else if (Array.isArray(data.data)) {
+          items = data.data;
+        } else if (Array.isArray(data.reviews)) {
+          // if we accidentally received the reviews endpoint, ignore (or transform)
+          items = data.reviews; // optional: you could map to UI shape if desired
+        } else {
+          console.warn("Unexpected media / reviews API response shape", data);
+        }
+
+        setMedia(items);
+      })
+      .catch(err => {
+        console.error("Media Fetch Error:", err);
+        toast.error("Failed to load media. Please check the console or try again later.");
+      });
   }, []);
 
   const submitReview = async () => {
@@ -35,22 +62,24 @@ function ReviewPage() {
     }
 
     try {
-      const response = await fetch("http://localhost:1000/reviews/add", {
+      const API_BASE = getApiBase();
+      const response = await fetch(`${API_BASE}/reviews/add`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name,
           location,
           type,
-          count,
+          count: Number(count),
           rating,
           message
         })
       });
 
-      const data = await response.json();
+      const resParsed = await parseAddResponse(response);
+      const data = resParsed.data;
 
-      if (data.success) {
+      if (resParsed.ok && (data && (data.success || data.review))) {
         toast.success("Review submitted successfully!");
 
         setShowForm(false);

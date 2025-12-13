@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { getApiBase, parseListResponse } from "../utils/apiHelpers.js";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 // Swiper styles
@@ -42,11 +43,13 @@ export default function ReviewsSlider() {
 
   // Fetch dynamic reviews from backend
   useEffect(() => {
-    fetch("https://bharat-rolling-shutters-sxgs.vercel.app/reviews/all")
-      .then(res => res.json())
+    const API_BASE = getApiBase();
+    fetch(`${API_BASE}/reviews/all`)
+      .then((res) => parseListResponse(res))
       .then(data => {
+        const raw = data;
         // Convert backend data format into slider-compatible format
-        const formattedDynamicReviews = data.map(r => ({
+        const formattedDynamicReviews = raw.map(r => ({
           name: r.name,
           location: r.location,
           review: r.message || "No message provided",

@@ -46,9 +46,9 @@ export default function Headero() {
           <Link to="/services" className="nav-link" style={linkStyle}>
             Services
           </Link>
-          <a href="/reviewsdetail" className="nav-link" style={linkStyle}>
+          <Link to="/reviewsdetail" className="nav-link" style={linkStyle}>
             Reviews
-          </a>
+          </Link>
           <Link to="/contact" className="nav-link">Contact</Link>
 
         </nav>
@@ -87,12 +87,12 @@ export default function Headero() {
           <Link to="/services" className="mobile-link" style={mobileLinkStyle}>
             Services
           </Link>
-          <a href="reviewsdetail" className="mobile-link" style={mobileLinkStyle}>
+          <Link to="/reviewsdetail" className="mobile-link" style={mobileLinkStyle}>
             Reviews
-          </a>
-          <a href="/contact" className="mobile-link" style={mobileLinkStyle}>
+          </Link>
+          <Link to="/contact" className="mobile-link" style={mobileLinkStyle}>
             Contact
-          </a>
+          </Link>
         </div>
       )}
     </header>

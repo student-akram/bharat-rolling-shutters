@@ -16,7 +16,7 @@ export default function Contactpage() {
       return;
     }
 
-    const adminNumber = "919398475175";
+    const adminNumber = "+919398475175"; // YOUR BUSINESS WHATSAPP NUMBER
 
     const text =
       `*New Customer Inquiry*\n\n` +
@@ -25,7 +25,7 @@ export default function Contactpage() {
       `*Phone:* ${phone}\n` +
       (message ? `*Message:* ${message}` : "");
 
-    const url = `https://wa.me/${adminNumber}?text=${encodeURIComponent(text)}`;
+    const url = `https://wa.me/${9398475175}?text=${encodeURIComponent(text)}`;
 
     window.open(url, "_blank");
   };
@@ -45,14 +45,7 @@ export default function Contactpage() {
       </p>
 
       {/* CONTACT GRID */}
-      <div 
-        style={{
-          marginTop: "40px",
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "40px"
-        }}
-      >
+      <div className="contact-grid">
 
         {/* LEFT SIDE — Contact Info */}
         <div>

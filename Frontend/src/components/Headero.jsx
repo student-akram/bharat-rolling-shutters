@@ -37,7 +37,7 @@ export default function Header() {
         <nav className="desktop-menu" aria-label="Main navigation">
           <Link to="/" className="nav-link">Home</Link>
           <Link to="/services" className="nav-link">Services</Link>
-          <Link to="/reviewsdetail" className="nav-link">Reviews</Link>
+          <Link to="/reviewsdetail" className="nav-link">Projects</Link>
           <Link to="/contact" className="nav-link">Contact</Link>
         </nav>
 

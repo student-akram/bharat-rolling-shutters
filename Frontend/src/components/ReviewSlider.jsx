@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { getApiBase, parseListResponse } from "../utils/apiHelpers";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 // Swiper styles
@@ -42,17 +43,11 @@ export default function ReviewsSlider() {
 
   // Fetch dynamic reviews from backend
   useEffect(() => {
-    const API_BASE = import.meta.env.VITE_API_BASE_URL || import.meta.env.API_BASE_URL || '';
+    const API_BASE = getApiBase();
     fetch(`${API_BASE}/reviews/all`)
-      .then(async (res) => {
-        if (!res.ok) {
-          const txt = await res.text();
-          throw new Error(`Review fetch failed: ${res.status} ${res.statusText} - ${txt}`);
-        }
-        return res.json();
-      })
+      .then((res) => parseListResponse(res))
       .then(data => {
-        const raw = Array.isArray(data) ? data : (Array.isArray(data.reviews) ? data.reviews : (Array.isArray(data.data) ? data.data : []));
+        const raw = data;
         // Convert backend data format into slider-compatible format
         const formattedDynamicReviews = raw.map(r => ({
           name: r.name,

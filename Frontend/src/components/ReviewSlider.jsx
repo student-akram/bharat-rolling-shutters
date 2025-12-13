@@ -42,11 +42,19 @@ export default function ReviewsSlider() {
 
   // Fetch dynamic reviews from backend
   useEffect(() => {
-    fetch("https://bharat-rolling-shutters-sxgs.vercel.app/reviews/all")
-      .then(res => res.json())
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || import.meta.env.API_BASE_URL || '';
+    fetch(`${API_BASE}/reviews/all`)
+      .then(async (res) => {
+        if (!res.ok) {
+          const txt = await res.text();
+          throw new Error(`Review fetch failed: ${res.status} ${res.statusText} - ${txt}`);
+        }
+        return res.json();
+      })
       .then(data => {
         // Convert backend data format into slider-compatible format
-        const formattedDynamicReviews = data.map(r => ({
+        const raw = Array.isArray(data) ? data : (Array.isArray(data.reviews) ? data.reviews : (Array.isArray(data.data) ? data.data : []));
+        const formattedDynamicReviews = raw.map(r => ({
           name: r.name,
           location: r.location,
           review: r.message || "No message provided",

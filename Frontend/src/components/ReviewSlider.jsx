@@ -1,115 +1,366 @@
-import React, { useEffect, useState } from "react";
-import { getApiBase, parseListResponse } from "../utils/apiHelpers.js";
-import { Swiper, SwiperSlide } from "swiper/react";
+/* GLOBAL COLOR THEME */
+:root {
+  --primary: #0B2A55;
+  --primary-light: #1F4C8F;
+  --text-light: #ffffff;
+  --text-dark: #0a0a0a;
+  --bg: #f8f9fc;
+}
 
-// Swiper styles
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
+/* GLOBAL */
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  color: var(--primary);
+}
 
-// Swiper modules
-import { Pagination, Autoplay, Navigation } from "swiper/modules";
+/* CENTER CONTAINER */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
 
-// STATIC DEFAULT REVIEWS (Your existing ones)
-const staticReviews = [
-  {
-    name: "Chanti",
-    location: "Giddaluru",
-    review: "Excellent shutter work! Smooth operation and very strong material.",
-    rating: 5
-  },
-  {
-    name: "Prasad Reddy",
-    location: "Markapuram",
-    review: "Installed an automatic gate. Perfect finishing & fast delivery.",
-    rating: 5
-  },
-  {
-    name: "DHANA LAKSHMI OIL AGENCIES",
-    location: "Ganapavaram",
-    review: "Best quality shutters. Service is very professional.",
-    rating: 4
-  },
-  {
-    name: "Kiran",
-    location: "Nidumukkala",
-    review: "Very satisfied with the shutter installation and support.",
-    rating: 5
+/* HERO SECTION */
+.hero {
+  height: 40vh;
+  background-image: url('https://images.unsplash.com/photo-1620937991273-a53ee320ff12?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzJ8fHNodXR0ZXIlMjBtYW51ZmFjdHVyZXJzfGVufDB8MHwwfHx8MA%3D%3D');
+  background-size: cover;
+  background-position: center;
+  padding: 120px;
+  object-fit: cover;
+  text-align: center;
+  color: var(--text-light);
+  animation: fadeIn 1.5s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hero-title {
+  font-size: 48px;
+  font-weight: 700;
+}
+
+.hero-sub {
+  font-size: 22px;
+  margin-top: 12px;
+  opacity: 0.9;
+}
+
+/* SECTION TITLE */
+.section-title {
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--primary);
+  animation: slideUp 0.7s ease;
+}
+
+/* GRID */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.service-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  transition: 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 30px rgba(0,0,0,0.1);
+}
+
+/* Contact grid responsive */
+.contact-grid {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+/* Header */
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0px 20px;
+}
+
+.logo{
+  height: auto;
+  max-height: 58px;
+}
+
+/* Header container and theming */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 120;
+  background: var(--primary);
+  color: var(--text-light);
+}
+
+.site-header .nav-link { color: var(--text-light); }
+.site-header .mobile-link { color: var(--text-light); }
+
+/* NAVIGATION LINKS */
+.nav-link {
+  color: black;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 24px;
+}
+
+.nav-link:hover {
+  color: #d0e4ff;
+}
+
+.desktop-menu {
+  display: flex;
+  gap: 24px;
+}
+
+.site-header .desktop-menu { gap: 16px; }
+
+/* PROJECT CARD --- used by ReviewPage "project-card" and the ReviewSlider cards */
+.project-card {
+  background: #fff;
+  padding-bottom: 10px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.09);
+  overflow: hidden;
+  border-top: 4px solid var(--primary);
+}
+
+.project-media img,
+.project-media video {
+  width: 100%;
+  height: auto;
+  max-height: 420px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Center the Swiper container contents and make them responsive */
+
+.reviews-swiper-container {
+  position: relative;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 48px;         /* ⬅ space for arrows */
+}
+
+.reviews-swiper-container .swiper {
+  overflow: hidden;
+}
+
+.swiper-container-centered {
+  max-width: 1100px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+/* Center cards */
+.swiper-slide {
+  display: flex;
+  justify-content: center;
+}
+
+/* Card width */
+.review-card {
+  width: 100%;
+  max-width: 320px;
+}
+
+/* Move arrows outside card area */
+.reviews-swiper-container .swiper-button-prev {
+  left: -36px;
+}
+
+.reviews-swiper-container .swiper-button-next {
+  right: 0;
+}
+
+/* Arrow size */
+.swiper-button-prev::after,
+.swiper-button-next::after {
+  font-size: 28px;
+}
+
+/* Make review cards wrap nicely and reduce fixed height on small screens */
+/* Card width */
+.review-card {
+  width: 100%;
+  max-width: 320px;
+}
+
+/* Move arrows outside card area */
+.reviews-swiper-container .swiper-button-prev {
+  left: 0;
+}
+
+.reviews-swiper-container .swiper-button-next {
+  right: 0;
+}
+
+/* MOBILE MENU */
+.menu-btn {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+
+.menu-btn span {
+  width: 26px;
+  height: 3px;
+  background: white;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+/* Hamburger animation */
+.menu-btn.open span:nth-child(1) {
+  transform: translateY(9px) rotate(45deg);
+}
+.menu-btn.open span:nth-child(2) {
+  opacity: 0;
+}
+.menu-btn.open span:nth-child(3) {
+  transform: translateY(-9px) rotate(-45deg);
+}
+.mobile-menu {
+  overflow: hidden;
+  max-height: 0;
+  background: var(--primary);
+  transition: max-height 0.35s ease;
+}
+
+.mobile-menu.open {
+  max-height: 300px;
+}
+.mobile-link {
+  display: block;
+  padding: 14px 22px;
+  color: white;
+  text-decoration: none;
+  border-bottom: 1px solid var(--primary-light);
+}
+
+.mobile-link:last-child {
+  border-bottom: none;
+}
+
+.mobile-link:hover {
+  background: var(--primary-light);
+}
+
+/* REVIEW SWIPER */
+.input-box {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #c9c9c9;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.input-box:focus {
+  outline: none;
+  border-color: #0B2A55;
+  box-shadow: 0 0 5px rgba(11,42,85,0.3);
+}
+
+/* Outer wrapper */
+.carousel-shell {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto 50px auto;
+  padding: 0 60px; /* space for arrows */
+}
+
+.carousel-container {
+  overflow: hidden;
+}
+
+.carousel-item {
+  display: flex;
+  justify-content: center;
+}
+
+.review-card {
+  width: 100%;
+  max-width: 300px;
+  background: #fff;
+  padding: 22px;
+  border-radius: 14px;
+  box-shadow: 0 0px 12px rgba(0,0,0,0.1);
+}
+
+/* arrows */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #0B2A55;
+  color: #fff;
+  border: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  font-size: 28px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.carousel-btn.left {
+  left: 10px;
+}
+
+.carousel-btn.right {
+  right: 10px;
+}
+
+
+/* Responsive header: show hamburger on small screens and hide desktop nav */
+@media (max-width: 768px) {
+  .desktop-menu { display: none; }
+  .menu-btn { display: flex; }
+  /* make header smaller */
+  .site-header .logo { max-height: 48px; }
+  .site-header .nav-link { font-size: 16px; }
+}
+
+@media (max-width: 480px) {
+  .site-header .logo { max-height: 42px; }
+  .nav-link { font-size: 14px; }
+  .hero {
+    height: 50vh;
+    padding: 80px 20px;
   }
-];
+  .hero-title { font-size: 32px; }
+  .hero-sub { font-size: 18px; }
+  .contact-grid {
+    display: flex;
+    flex-direction: column;
+  }
+  .swiper-button-prev,
+  .swiper-button-next {
+    display: none;
+  }
 
-export default function ReviewsSlider() {
-  const [reviews, setReviews] = useState([]);
-
-  // Fetch dynamic reviews from backend
-  useEffect(() => {
-    const API_BASE = getApiBase();
-    fetch(`${API_BASE}/reviews/all`)
-      .then((res) => parseListResponse(res))
-      .then(data => {
-        const raw = data;
-        // Convert backend data format into slider-compatible format
-        const formattedDynamicReviews = raw.map(r => ({
-          name: r.name,
-          location: r.location,
-          review: r.message || "No message provided",
-          rating: r.rating
-        }));
-
-        // Combine static + dynamic reviews
-        setReviews([...staticReviews, ...formattedDynamicReviews]);
-      })
-      .catch(err => console.log(err));
-  }, []);
-
-  return (
-    <div className="review-slider-wrapper" style={{ marginTop: "50px", marginBottom: "50px" }}>
-      <h2 className="section-title" style={{ textAlign: "center" }}>
-        Customer Reviews
-      </h2>
-
-      <Swiper
-        modules={[Pagination, Autoplay, Navigation]}
-        pagination={{ clickable: true }}
-        navigation={true}
-        autoplay={{ delay: 2000 }}
-        spaceBetween={40}
-        slidesPerView={1}
-        style={{ padding: "20px" }}
-        breakpoints={{
-          768: { slidesPerView: 2 },
-          1024: { slidesPerView: 3 }
-        }}
-      >
-        {reviews.map((r, i) => (
-          <SwiperSlide key={i}>
-            <div
-              className="review-card"
-              style={{
-                background: "#ffffff",
-                padding: "20px",
-                borderRadius: "10px",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                borderTop: "4px solid #0B2A55"
-              }}
-            >
-              <h3 style={{ marginBottom: "5px", color: "#0B2A55" }}>
-                {r.name || "Customer"}
-              </h3>
-
-              <p style={{ fontWeight: 500 }}>{r.location}</p>
-
-              <p style={{ fontSize: "15px", marginTop: "10px", lineHeight: "1.6" }}>
-                {r.review}
-              </p>
-
-              <p style={{ marginTop: "10px", color: "#FFD700" }}>
-                {"⭐".repeat(r.rating)}
-              </p>
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
-    </div>
-  );
+  .reviews-swiper-container {
+    padding: 0;  /* full width on mobile */
+  }
 }

@@ -283,7 +283,6 @@ body {
 
 /* REVIEW SWIPER */
 .input-box {
-  width: 100%;
   padding: 12px;
   border: 1px solid #c9c9c9;
   border-radius: 5px;
@@ -294,6 +293,16 @@ body {
   outline: none;
   border-color: #0B2A55;
   box-shadow: 0 0 5px rgba(11,42,85,0.3);
+}
+
+.msg-btn {
+  background-color: #0B2A55;
+  color: white;
+  padding: 12px;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 4px;
 }
 
 /* Outer wrapper */
@@ -373,6 +382,16 @@ body {
 .project-desc {
   font-size: 15px;
   color: #444;
+}
+
+.map-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 /* Mobile */

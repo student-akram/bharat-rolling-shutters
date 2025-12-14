@@ -79,19 +79,6 @@ export default function Contactpage() {
             Jani Nityananda nagar 1 line Shop No-2 Ponnur Road (522003) <br />
             Guntur, Andhra Pradesh
           </p>
-
-          {/* GOOGLE MAP */}
-          <div style={{ marginTop: "20px" }}>
-            <iframe
-              title="map"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3818.6212145713877!2d80.4354528735682!3d16.29691283444656!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a4a80a01b7791fb%3A0x5bfedb7e35ca41d1!2sBharat%20Rolling%20Shutters%20%26%20Engineering%20Works!5e0!3m2!1sen!2sin!4v1732529982280!5m2!1sen!2sin"
-              width="100%"
-              height="250"
-              style={{ border: 0 }}
-              allowFullScreen=""
-              loading="lazy"
-            ></iframe>
-          </div>
         </div>
 
         {/* RIGHT SIDE — WhatsApp Form */}
@@ -138,15 +125,7 @@ export default function Contactpage() {
 
             <button
               type="submit"
-              style={{
-                backgroundColor: "#0B2A55",
-                color: "white",
-                padding: "12px",
-                border: "none",
-                fontSize: "18px",
-                cursor: "pointer",
-                borderRadius: "4px"
-              }}
+              className="msg-btn"
             >
               Send on WhatsApp
             </button>
@@ -154,6 +133,18 @@ export default function Contactpage() {
         </div>
 
       </div>
+      {/* GOOGLE MAP */}
+          <div className = "map-container">
+            <iframe
+              title="map"
+              src = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3466.001521535912!2d80.467234274604!3d16.268881834063187!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a4a0b58a2fcd90d%3A0xb2bd6421d1315263!2sBHARAT%20ROLLING%20SHUTTERS!5e1!3m2!1sen!2sin!4v1765705843843!5m2!1sen!2sin"
+              width="100%"
+              height="250"
+              style={{ border: 0 }}
+              allowFullScreen=""
+              loading="lazy"
+            ></iframe>
+          </div>
     </div>
   );
 }

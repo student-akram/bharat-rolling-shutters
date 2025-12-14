@@ -40,14 +40,26 @@ body {
 }
 
 .hero-title {
-  font-size: 48px;
+  font-size: 52px;
+  margin-bottom: 15px;
   font-weight: 700;
 }
 
 .hero-sub {
   font-size: 22px;
-  margin-top: 12px;
-  opacity: 0.9;
+  opacity: 0.92;
+}
+
+.story-text {
+  line-height: 1.7;
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+
+.trust-list {
+  line-height: 1.9;
+  font-size: 18px;
+  padding-left: 20px;
 }
 
 /* SECTION TITLE */
@@ -60,6 +72,17 @@ body {
 }
 
 /* GRID */
+
+.service-page {
+  padding: 40px 20px;
+}
+
+.service-intro {
+  font-size: 18px;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
 .services-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -86,6 +109,20 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 40px;
+}
+
+.contact-page { padding: 40px 20px; }
+
+.contact-header { margin-bottom: 25px; }
+.contact-intro { font-size: 18px; max-width: 700px; }
+
+.contact-details p { font-size: 18px; line-height: 1.7; }
+.contact-details a { color: #0B2A55; font-weight: 600; }
+
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 /* Header */
@@ -189,6 +226,20 @@ body {
   display: flex;
   justify-content: center;
 }
+
+.review-page { padding: 20px; text-align: center; }
+.review-header h1 { font-size: 34px; color: #0A2342; }
+.review-header p { color: #555; margin: 10px 0 20px; }
+.review-btn { background:#0A2342;color:#fff;padding:20px 25px;border-radius:6px;border:none;cursor:pointer }
+
+.project-text { padding: 10px 15px; }
+.project-text h3 { color:#0A2342;font-size:18px }
+
+.review-overlay { position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;justify-content:center;align-items:center }
+.review-popup { background:#fff;padding:30px;border-radius:10px;max-width:400px;width:90%;position:relative }
+
+.rating-stars span { font-size:26px;cursor:pointer;color:#ccc }
+.rating-stars .active { color:#FFD700 }
 
 /* Card width */
 .review-card {
@@ -297,12 +348,18 @@ body {
 
 .msg-btn {
   background-color: #0B2A55;
-  color: white;
+  color: #fff;
   padding: 12px;
+  border-radius: 6px;
   border: none;
-  font-size: 18px;
   cursor: pointer;
-  border-radius: 4px;
+}
+
+.map-container iframe {
+  width: 100%;
+  height: 250px;
+  border: 0;
+  margin-top: 30px;
 }
 
 /* Outer wrapper */
@@ -382,16 +439,6 @@ body {
 .project-desc {
   font-size: 15px;
   color: #444;
-}
-
-.map-container{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 20px;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 /* Mobile */

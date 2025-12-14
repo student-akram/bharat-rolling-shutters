@@ -141,10 +141,10 @@ function ReviewPage() {
             <button className="close-btn" onClick={() => setShowForm(false)}>✕</button>
             <h2>Submit Your Review</h2>
 
-            <input placeholder="Your Name *" value={name} onChange={e => setName(e.target.value)} />
-            <input placeholder="Your Location *" value={location} onChange={e => setLocation(e.target.value)} />
+            <input placeholder="Your Name *" value={name} onChange={e => setName(e.target.value)} /><br /><br />
+            <input placeholder="Your Location *" value={location} onChange={e => setLocation(e.target.value)} /><br /><br />
             <select value={type} onChange={e => setType(e.target.value)}>
-              <option value="">Select Type *</option>
+              <option value="">Select Type *</option><br /><br />
               <option value="New Installation">New Installation</option>
               <option value="Repaired">Repaired</option>
               <option value="Both">Both</option>
@@ -156,7 +156,7 @@ function ReviewPage() {
               ))}
             </div>
 
-            <textarea placeholder="Message (optional)" value={message} onChange={e => setMessage(e.target.value)} />
+            <textarea placeholder="Message (optional)" value={message} onChange={e => setMessage(e.target.value)} /><br /><br />
             <button className="submit-btn" onClick={submitReview}>Submit Review</button>
           </div>
         </div>

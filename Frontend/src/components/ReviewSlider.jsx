@@ -1,115 +1,88 @@
 import React, { useEffect, useState } from "react";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 import { getApiBase, parseListResponse } from "../utils/apiHelpers.js";
-import { Swiper, SwiperSlide } from "swiper/react";
 
-// Swiper styles
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
-
-// Swiper modules
-import { Pagination, Autoplay, Navigation } from "swiper/modules";
-
-// STATIC DEFAULT REVIEWS (Your existing ones)
 const staticReviews = [
-  {
-    name: "Chanti",
-    location: "Giddaluru",
-    review: "Excellent shutter work! Smooth operation and very strong material.",
-    rating: 5
-  },
-  {
-    name: "Prasad Reddy",
-    location: "Markapuram",
-    review: "Installed an automatic gate. Perfect finishing & fast delivery.",
-    rating: 5
-  },
-  {
-    name: "DHANA LAKSHMI OIL AGENCIES",
-    location: "Ganapavaram",
-    review: "Best quality shutters. Service is very professional.",
-    rating: 4
-  },
-  {
-    name: "Kiran",
-    location: "Nidumukkala",
-    review: "Very satisfied with the shutter installation and support.",
-    rating: 5
-  }
+  { name: "Chanti", location: "Giddaluru", review: "Excellent shutter work!", rating: 5 },
+  { name: "Prasad Reddy", location: "Markapuram", review: "Perfect finishing & fast delivery.", rating: 5 },
+  { name: "DHANA LAKSHMI OIL AGENCIES", location: "Ganapavaram", review: "Very professional service.", rating: 4 },
+  { name: "Kiran", location: "Nidumukkala", review: "Very satisfied with installation.", rating: 5 }
 ];
 
-export default function ReviewsSlider() {
-  const [reviews, setReviews] = useState([]);
+const responsive = {
+  desktop: {
+    breakpoint: { max: 4000, min: 1024 },
+    items: 3
+  },
+  tablet: {
+    breakpoint: { max: 1024, min: 768 },
+    items: 2
+  },
+  mobile: {
+    breakpoint: { max: 768, min: 0 },
+    items: 1
+  }
+};
 
-  // Fetch dynamic reviews from backend
+/* ✅ Proper button group (library-supported) */
+const ButtonGroup = ({ next, previous }) => {
+  return (
+    <>
+      <button className="carousel-btn left" onClick={previous} aria-label="Previous">
+        ‹
+      </button>
+      <button className="carousel-btn right" onClick={next} aria-label="Next">
+        ›
+      </button>
+    </>
+  );
+};
+
+export default function ReviewsSlider() {
+  const [reviews, setReviews] = useState(staticReviews);
+
   useEffect(() => {
     const API_BASE = getApiBase();
     fetch(`${API_BASE}/reviews/all`)
-      .then((res) => parseListResponse(res))
+      .then(res => parseListResponse(res))
       .then(data => {
-        const raw = data;
-        // Convert backend data format into slider-compatible format
-        const formattedDynamicReviews = raw.map(r => ({
-          name: r.name,
-          location: r.location,
-          review: r.message || "No message provided",
-          rating: r.rating
-        }));
-
-        // Combine static + dynamic reviews
-        setReviews([...staticReviews, ...formattedDynamicReviews]);
+        const raw = Array.isArray(data) ? data : [];
+        setReviews([...staticReviews, ...raw]);
       })
-      .catch(err => console.log(err));
+      .catch(console.error);
   }, []);
 
   return (
-    <div className="review-slider-wrapper" style={{ marginTop: "50px", marginBottom: "50px" }}>
+    <div className="review-slider-wrapper">
       <h2 className="section-title" style={{ textAlign: "center" }}>
         Customer Reviews
       </h2>
 
-      <Swiper
-        modules={[Pagination, Autoplay, Navigation]}
-        pagination={{ clickable: true }}
-        navigation={true}
-        autoplay={{ delay: 2000 }}
-        spaceBetween={40}
-        slidesPerView={1}
-        style={{ padding: "20px" }}
-        breakpoints={{
-          768: { slidesPerView: 2 },
-          1024: { slidesPerView: 3 }
-        }}
-      >
-        {reviews.map((r, i) => (
-          <SwiperSlide key={i}>
-            <div
-              className="review-card"
-              style={{
-                background: "#ffffff",
-                padding: "20px",
-                borderRadius: "10px",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                borderTop: "4px solid #0B2A55"
-              }}
-            >
-              <h3 style={{ marginBottom: "5px", color: "#0B2A55" }}>
-                {r.name || "Customer"}
-              </h3>
-
-              <p style={{ fontWeight: 500 }}>{r.location}</p>
-
-              <p style={{ fontSize: "15px", marginTop: "10px", lineHeight: "1.6" }}>
-                {r.review}
-              </p>
-
-              <p style={{ marginTop: "10px", color: "#FFD700" }}>
-                {"⭐".repeat(r.rating)}
-              </p>
+      <div className="carousel-shell">
+        <Carousel
+          responsive={responsive}
+          infinite
+          autoPlay
+          autoPlaySpeed={2500}
+          arrows={false}                 // disable default arrows
+          renderButtonGroupOutside
+          customButtonGroup={<ButtonGroup />}
+          partialVisible={false}
+          centerMode={false}
+          containerClass="carousel-container"
+          itemClass="carousel-item"
+        >
+          {reviews.map((r, i) => (
+            <div className="review-card" key={i}>
+              <h3>{r.name}</h3>
+              <p>{r.location}</p>
+              <p>{r.review || "No message provided"}</p>
+              <p>{"⭐".repeat(Number(r.rating) || 0)}</p>
             </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+          ))}
+        </Carousel>
+      </div>
     </div>
   );
 }

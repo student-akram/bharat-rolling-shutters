@@ -1,116 +1,105 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-export default function Headero() {
+export default function Header() {
   const [open, setOpen] = useState(false);
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    document.body.style.overflow = open ? "hidden" : "";
+
+    return () => {
+      document.body.style.overflow = "";
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
+
   return (
-    <header
-      style={{
-        backgroundColor: "#0B2A55",
-        padding: "15px 25px",
-        color: "white",
-        position: "sticky",
-        top: 0,
-        zIndex: 1000,
-        boxShadow: "0 2px 10px rgba(0,0,0,0.15)"
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          maxWidth: "1200px",
-          margin: "0 auto"
-        }}
-      >
-        {/* LOGO */}
+    <header className="site-header" role="banner">
+      <div className="header-inner">
+
+        {/* LOGO — brand signal */}
         <Link
           to="/"
-          style={{
-            color: "white",
-            fontSize: "22px",
-            fontWeight: "700",
-            textDecoration: "none"
-          }}
+          className="logo"
+          aria-label="Bharat Shutters & Engineering Works Home"
         >
-          Bharat Shutters & Engineering Works
+          <img
+            src="/logo.png"
+            className="logo"
+            alt="Bharat Shutters & Engineering Works Logo"
+            width="160"
+            height="48"
+          />
         </Link>
 
-        {/* DESKTOP MENU */}
-        <nav className="desktop-menu" style={{ display: "flex", gap: "25px" }}>
-          <Link to="/" className="nav-link" style={linkStyle}>
+        {/* DESKTOP NAV — primary crawlable links */}
+        <nav className="desktop-menu" aria-label="Primary navigation">
+          <Link to="/" className="nav-link">
             Home
           </Link>
-          <Link to="/services" className="nav-link" style={linkStyle}>
+
+          <Link to="/services" className="nav-link">
             Services
           </Link>
-          <Link to="/reviewsdetail" className="nav-link" style={linkStyle}>
-            Reviews
-          </Link>
-          <Link to="/contact" className="nav-link">Contact</Link>
 
+          <Link to="/reviewsdetail" className="nav-link">
+            Projects
+          </Link>
+
+          <Link to="/contact" className="nav-link">
+            Contact
+          </Link>
         </nav>
 
         {/* MOBILE MENU BUTTON */}
         <button
-          className="menu-btn"
-          onClick={() => setOpen(!open)}
-          style={{
-            display: "none",
-            background: "none",
-            border: "none",
-            fontSize: "28px",
-            color: "white",
-            cursor: "pointer"
-          }}
+          type="button"
+          className={`menu-btn ${open ? "open" : ""}`}
+          onClick={() => setOpen((prev) => !prev)}
+          aria-label="Toggle navigation menu"
+          aria-expanded={open}
+          aria-controls="mobile-navigation"
         >
-          ☰
+          <span />
+          <span />
+          <span />
         </button>
       </div>
 
-      {/* MOBILE DROPDOWN */}
+      {/* MOBILE NAV — same links, never replacing desktop nav */}
+      <nav
+        id="mobile-navigation"
+        className={`mobile-menu ${open ? "open" : ""}`}
+        aria-label="Mobile navigation"
+        aria-hidden={!open}
+      >
+        <Link to="/" className="mobile-link" onClick={() => setOpen(false)}>
+          Home
+        </Link>
+        <Link to="/services" className="mobile-link" onClick={() => setOpen(false)}>
+          Services
+        </Link>
+        <Link to="/reviewsdetail" className="mobile-link" onClick={() => setOpen(false)}>
+          Projects
+        </Link>
+        <Link to="/contact" className="mobile-link" onClick={() => setOpen(false)}>
+          Contact
+        </Link>
+      </nav>
+
+      {/* OVERLAY */}
       {open && (
         <div
-          className="mobile-menu"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            backgroundColor: "#0B2A55",
-            padding: "15px 20px"
-          }}
-        >
-          <Link to="/" className="mobile-link" style={mobileLinkStyle}>
-            Home
-          </Link>
-          <Link to="/services" className="mobile-link" style={mobileLinkStyle}>
-            Services
-          </Link>
-          <Link to="/reviewsdetail" className="mobile-link" style={mobileLinkStyle}>
-            Reviews
-          </Link>
-          <Link to="/contact" className="mobile-link" style={mobileLinkStyle}>
-            Contact
-          </Link>
-        </div>
+          className="menu-overlay show"
+          onClick={() => setOpen(false)}
+          aria-hidden="true"
+        />
       )}
     </header>
   );
 }
-
-/* LINK STYLES */
-const linkStyle = {
-  color: "white",
-  textDecoration: "none",
-  fontSize: "16px",
-  fontWeight: "500"
-};
-
-const mobileLinkStyle = {
-  padding: "12px 0",
-  color: "white",
-  borderBottom: "1px solid #1F4C8F",
-  textDecoration: "none",
-  fontSize: "18px"
-};

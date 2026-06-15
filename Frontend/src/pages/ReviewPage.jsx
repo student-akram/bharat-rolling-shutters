@@ -2,309 +2,268 @@ import { useState, useEffect } from "react";
 import { getApiBase, parseListResponse, parseAddResponse } from "../utils/apiHelpers.js";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import { Navigation, Pagination } from "swiper/modules";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 
 function ReviewPage() {
   const navigate = useNavigate();
-
   const [media, setMedia] = useState([]);
+  const [selectedLetter, setSelectedLetter] = useState("ALL");
 
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const [type, setType] = useState("");
-  const [count, setCount] = useState("");
+  const [count, setCount] = useState(1);
   const [message, setMessage] = useState("");
   const [rating, setRating] = useState(0);
+
+  const responsive = {
+    desktop: { breakpoint: { max: 4000, min: 1024 }, items: 3 },
+    tablet: { breakpoint: { max: 1024, min: 768 }, items: 2 },
+    mobile: { breakpoint: { max: 768, min: 0 }, items: 1 },
+  };
+
+  const ButtonGroup = ({ next, previous }) => (
+    <>
+      <button className="carousel-btn left" onClick={previous} aria-label="Previous">‹</button>
+      <button className="carousel-btn right" onClick={next} aria-label="Next">›</button>
+    </>
+  );
 
   useEffect(() => {
     const API_BASE = getApiBase();
     fetch(`${API_BASE}/media/all`)
       .then(res => parseListResponse(res))
-      .then((data) => {
-        if (!data) {
-          setMedia([]);
-          return;
-        }
-
-        // normalize to an array of media objects
-        let items = [];
-        if (Array.isArray(data)) {
-          items = data;
-        } else if (Array.isArray(data.media)) {
-          items = data.media;
-        } else if (Array.isArray(data.data)) {
-          items = data.data;
-        } else if (Array.isArray(data.reviews)) {
-          // if we accidentally received the reviews endpoint, ignore (or transform)
-          items = data.reviews; // optional: you could map to UI shape if desired
-        } else {
-          console.warn("Unexpected media / reviews API response shape", data);
-        }
-
-        setMedia(items);
-      })
-      .catch(err => {
-        console.error("Media Fetch Error:", err);
-        toast.error("Failed to load media. Please check the console or try again later.");
-      });
+      .then(data => setMedia(Array.isArray(data) ? data : []))
+      .catch(() => toast.error("Failed to load media"));
   }, []);
 
   const submitReview = async () => {
-    if (!name || !location || !type || !count || rating === 0) {
+    if (!name || !location || !type || rating === 0) {
       toast.warning("Please fill all required fields");
       return;
     }
 
     try {
       const API_BASE = getApiBase();
-      const response = await fetch(`${API_BASE}/reviews/add`, {
+      const res = await fetch(`${API_BASE}/reviews/add`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          location,
-          type,
-          count: Number(count),
-          rating,
-          message
-        })
+        body: JSON.stringify({ name, location, type, count, rating, message }),
       });
 
-      const resParsed = await parseAddResponse(response);
-      const data = resParsed.data;
-
-      if (resParsed.ok && (data && (data.success || data.review))) {
+      const parsed = await parseAddResponse(res);
+      if (parsed.ok) {
         toast.success("Review submitted successfully!");
-
         setShowForm(false);
-
-        setTimeout(() => {
-          navigate("/");
-        }, 1200);
-      } else {
-        toast.error("Failed to submit review");
-      }
-
-    } catch (error) {
-      toast.error("Backend error occurred");
-      console.log(error);
+        navigate("/");
+      } else toast.error("Failed to submit review");
+    } catch {
+      toast.error("Server error");
     }
   };
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+  const filteredMedia =
+    selectedLetter === "ALL"
+      ? media
+      : media.filter(
+        item =>
+          item.location &&
+          item.location.trim().toUpperCase().startsWith(selectedLetter)
+      );
+
+  const photoMedia = filteredMedia.filter(
+    item => item.type === "photo"
+  );
+
+  const videoMedia = filteredMedia.filter(
+    item => item.type === "video"
+  );
 
   return (
-    <div style={pageStyle}>
-      <h1 style={titleStyle}>Our Completed Projects</h1>
-      <p style={subtitleStyle}>Photos and videos of shutters installed across AP</p>
+    <main className="review-page">
 
+      <header className="review-header">
+        <h1>
+          Completed Projects Across Andhra Pradesh
+        </h1>
+
+        <p>
+          Browse real installation photos and videos of rolling
+          shutters and automatic sliding gates completed at
+          various locations across Andhra Pradesh.
+        </p>
+
+        <button className="review-btn" onClick={() => setShowForm(true)}>
+          Write a Review
+        </button>
+      </header>
+      <section className="location-filter-section">
+
+  <h2>Find Projects by Location</h2>
+
+  <p>
+    Select a letter to explore completed projects
+    in your area.
+  </p>
+
+  <div className="alphabet-grid">
+
+    <button
+      className={
+        selectedLetter === "ALL"
+          ? "alphabet-btn active"
+          : "alphabet-btn"
+      }
+      onClick={() => setSelectedLetter("ALL")}
+    >
+      ALL
+    </button>
+
+    {alphabet.map(letter => (
       <button
-        onClick={() => setShowForm(true)}
-        style={reviewButton}
+        key={letter}
+        className={
+          selectedLetter === letter
+            ? "alphabet-btn active"
+            : "alphabet-btn"
+        }
+        onClick={() => setSelectedLetter(letter)}
       >
-        Write a Review
+        {letter}
       </button>
+    ))}
 
-      {/* ----------------------- PHOTO SWIPER ----------------------- */}
-      <h2 style={sectionTitle}>Project Photos</h2>
+  </div>
 
-      <Swiper
-        modules={[Navigation, Pagination]}
-        navigation
-        pagination={{ clickable: true }}
-        spaceBetween={30}
-        slidesPerView={1}
-        style={{ padding: "20px", maxWidth: "1000px" }}
-        breakpoints={{
-          768: { slidesPerView: 2 },
-          1024: { slidesPerView: 3 },
-        }}
-      >
-        {media.filter(item => item.type === "photo").map((item, index) => (
-          <SwiperSlide key={index}>
-            <div style={cardStyle}>
-              <img src={item.url} style={mediaStyle} alt="project" />
-              <div style={textBox}>
-                <h3 style={locationText}>{item.location}</h3>
-                <p style={descText}>{item.description}</p>
-              </div>
+<div className="filter-status">
+  Showing Locations Starting With :
+  <strong>{selectedLetter}</strong>
+</div>
+
+</section>
+{
+  selectedLetter !== "ALL" &&
+  photoMedia.length === 0 &&
+  videoMedia.length === 0 && (
+    <div className="empty-projects">
+      No completed projects found for locations
+      starting with "{selectedLetter}".
+    </div>
+  )
+}
+
+      {/* PROJECT PHOTOS */}
+      <section aria-labelledby="project-photos">
+  <h2 id="project-photos" className="section-title">
+    Project Photos
+  </h2>
+
+  {photoMedia.length > 0 ? (
+    <div className="carousel-shell">
+<Carousel
+  responsive={responsive}
+  infinite={photoMedia.length > 1}
+  arrows={false}
+  renderButtonGroupOutside
+  customButtonGroup={<ButtonGroup />}
+  partialVisible={false}
+>
+        {photoMedia.map((item, i) => (
+          <article className="project-card" key={i}>
+            <div className="project-media">
+              <img
+                src={item.url}
+                alt={`${item.location} shutter installation`}
+                loading="lazy"
+              />
             </div>
-          </SwiperSlide>
+
+            <div className="project-text">
+              <h3>{item.location}</h3>
+              <p>{item.description}</p>
+            </div>
+          </article>
         ))}
-      </Swiper>
+      </Carousel>
+    </div>
+  ) : (
+    selectedLetter !== "ALL" && (
+      null
+    )
+  )}
+</section>
 
-      {/* ----------------------- VIDEO SWIPER ----------------------- */}
-      <h2 style={sectionTitle}>Project Videos</h2>
+      {/* PROJECT VIDEOS */}
+      <section aria-labelledby="project-videos">
+  <h2 id="project-videos" className="section-title">
+    Project Videos
+  </h2>
 
-      <Swiper
-        modules={[Navigation, Pagination]}
-        navigation
-        pagination={{ clickable: true }}
-        spaceBetween={30}
-        slidesPerView={1}
-        style={{ padding: "20px", maxWidth: "1000px" }}
-        breakpoints={{
-          768: { slidesPerView: 2 },
-          1024: { slidesPerView: 3 },
-        }}
-      >
-        {media.filter(item => item.type === "video").map((item, index) => (
-          <SwiperSlide key={index}>
-            <div style={cardStyle}>
-              <video controls style={mediaStyle}>
+  {videoMedia.length > 0 ? (
+    <div className="carousel-shell">
+<Carousel
+  responsive={responsive}
+  infinite={videoMedia.length > 1}
+  arrows={false}
+  renderButtonGroupOutside
+  customButtonGroup={<ButtonGroup />}
+  partialVisible={false}
+>
+        {videoMedia.map((item, i) => (
+          <article className="project-card" key={i}>
+            <div className="project-media video-wrapper">
+              <video controls playsInline poster={item.thumbnail || ""}>
                 <source src={item.url} />
               </video>
-              <div style={textBox}>
-                <h3 style={locationText}>{item.location}</h3>
-                <p style={descText}>{item.description}</p>
-              </div>
             </div>
-          </SwiperSlide>
+
+            <div className="project-text">
+              <h3>{item.location}</h3>
+              <p>{item.description}</p>
+            </div>
+          </article>
         ))}
-      </Swiper>
-
-      {/* ----------------------- REVIEW POPUP ----------------------- */}
+      </Carousel>
+    </div>
+  ) : (
+    selectedLetter !== "ALL" && (
+      null
+    )
+  )}
+</section>
+      {/* REVIEW FORM */}
       {showForm && (
-        <div style={overlay}>
-          <div style={popup}>
+        <div className="review-overlay">
+          <div className="review-popup">
+            <button className="close-btn" onClick={() => setShowForm(false)}>✕</button>
+            <h2>Submit Your Review</h2>
 
-            <button onClick={() => setShowForm(false)} style={closeBtn}>✕</button>
-
-            <h2 style={formTitle}>Write Your Review</h2>
-
-            <input placeholder="Your Name *" style={input}
-              onChange={(e) => setName(e.target.value)} />
-
-            <input placeholder="Your Location *" style={input}
-              onChange={(e) => setLocation(e.target.value)} />
-
-            <input placeholder="How many shutters? *" style={input}
-              onChange={(e) => setCount(e.target.value)} />
-
-            <select style={input} onChange={(e) => setType(e.target.value)}>
-              <option value="">Select Type *</option>
+            <input placeholder="Your Name *" value={name} onChange={e => setName(e.target.value)} /><br /><br />
+            <input placeholder="Your Location *" value={location} onChange={e => setLocation(e.target.value)} /><br /><br />
+            <select value={type} onChange={e => setType(e.target.value)}>
+              <option value="">Select Type *</option><br /><br />
               <option value="New Installation">New Installation</option>
               <option value="Repaired">Repaired</option>
               <option value="Both">Both</option>
             </select>
 
-            <div style={{ display: "flex", justifyContent: "center", margin: "10px 0" }}>
+            <div className="rating-stars">
               {[1, 2, 3, 4, 5].map(star => (
-                <span
-                  key={star}
-                  style={{
-                    fontSize: "30px",
-                    margin: "0 5px",
-                    cursor: "pointer",
-                    color: rating >= star ? "#FFD700" : "#ccc"
-                  }}
-                  onClick={() => setRating(star)}
-                >
-                  ★
-                </span>
+                <span key={star} onClick={() => setRating(star)} className={rating >= star ? "active" : ""}>★</span>
               ))}
             </div>
 
-            <textarea placeholder="Your Message (optional)" style={textarea}
-              onChange={(e) => setMessage(e.target.value)} />
-
-            <button onClick={submitReview} style={submitBtn}>
-              Submit Review
-            </button>
-
+            <textarea placeholder="Message (optional)" value={message} onChange={e => setMessage(e.target.value)} /><br /><br />
+            <button className="submit-btn" onClick={submitReview}>Submit Review</button>
           </div>
         </div>
       )}
-    </div>
+
+    </main>
   );
 }
 
 export default ReviewPage;
-
-/* ---------------------- STYLES ---------------------- */
-
-const pageStyle = { padding: "20px", textAlign: "center" };
-const titleStyle = { fontSize: "34px", fontWeight: "700", color: "#0A2342" };
-const subtitleStyle = { fontSize: "16px", marginBottom: "20px", color: "#555" };
-
-const sectionTitle = { fontSize: "26px", fontWeight: "700", marginTop: "40px", color: "#0A2342" };
-
-const reviewButton = {
-  backgroundColor: "#0A2342",
-  color: "white",
-  padding: "12px 25px",
-  borderRadius: "6px",
-  fontSize: "18px",
-  cursor: "pointer",
-  border: "none",
-  margin: "20px 0",
-};
-
-const cardStyle = {
-  background: "#fff",
-  borderRadius: "12px",
-  boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-  paddingBottom: "10px",
-  overflow: "hidden",
-  borderTop: "4px solid #0A2342",
-};
-
-const mediaStyle = {
-  width: "100%",
-  height: "220px",
-  objectFit: "cover",
-  borderRadius: "12px 12px 0 0",
-};
-
-const textBox = { padding: "10px 15px" };
-const locationText = { fontSize: "18px", fontWeight: "700", color: "#0A2342" };
-const descText = { fontSize: "15px", color: "#444" };
-
-const overlay = {
-  position: "fixed",
-  top: 0, left: 0, right: 0, bottom: 0,
-  backgroundColor: "rgba(0,0,0,0.5)",
-  display: "flex", justifyContent: "center", alignItems: "center",
-  zIndex: 999,
-};
-
-const popup = {
-  background: "#fff",
-  padding: "30px",
-  width: "90%",
-  maxWidth: "400px",
-  borderRadius: "10px",
-  boxShadow: "0 4px 15px rgba(0,0,0,0.3)",
-  position: "relative",
-};
-
-const closeBtn = {
-  position: "absolute", right: "10px", top: "10px",
-  background: "none", border: "none", fontSize: "22px",
-  cursor: "pointer", color: "#333"
-};
-
-const formTitle = { fontSize: "22px", color: "#0A2342", marginBottom: "15px" };
-
-const input = {
-  width: "100%", padding: "10px",
-  marginBottom: "10px", borderRadius: "6px",
-  border: "1px solid #ccc"
-};
-
-const textarea = {
-  width: "100%", height: "80px",
-  padding: "10px", borderRadius: "6px",
-  border: "1px solid #ccc"
-};
-
-const submitBtn = {
-  width: "100%", padding: "12px",
-  backgroundColor: "#0A2342",
-  color: "white", border: "none",
-  borderRadius: "6px", cursor: "pointer"
-};

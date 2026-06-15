@@ -17,12 +17,26 @@ router.post("/add", async (req, res) => {
 // GET - Fetch all reviews
 router.get("/all", async (req, res) => {
     console.log("🔥 /reviews/all hit");
+
     try {
-        const reviews = await Review.find().sort({ createdAt: -1 });
-        res.send(reviews);
+        console.log("Model Name:", Review.modelName);
+
+        const count = await Review.countDocuments();
+
+        console.log("Review Count:", count);
+
+        res.json({
+            success: true,
+            count
+        });
+
     } catch (err) {
-        res.status(500).send(err);
+        console.error("REVIEWS ERROR:", err);
+
+        res.status(500).json({
+            success: false,
+            message: err.message
+        });
     }
 });
-
 module.exports = router;

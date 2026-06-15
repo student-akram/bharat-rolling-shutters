@@ -1,6 +1,8 @@
 const express = require("express");
 const Review = require("../models/Review");
+console.log("✅ reviewRoutes.js loaded");
 const router = express.Router();
+
 
 // POST - Add new review
 router.post("/add", async (req, res) => {
@@ -32,6 +34,28 @@ router.get("/all", async (req, res) => {
 
     } catch (err) {
         console.error("REVIEWS ERROR:", err);
+
+        res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    }
+});
+router.get("/test-reviews", async (req, res) => {
+    try {
+        console.log("TEST ROUTE HIT");
+
+        console.log("readyState:", require("mongoose").connection.readyState);
+
+        const count = await Review.countDocuments();
+
+        res.json({
+            success: true,
+            count
+        });
+
+    } catch (err) {
+        console.error("TEST ERROR:", err);
 
         res.status(500).json({
             success: false,

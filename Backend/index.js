@@ -1,3 +1,5 @@
+console.log("RUNNING FILE:", __filename);
+console.log("WORKING DIR:", process.cwd());
 require('dotenv').config(); // load .env as early as possible
 
 const express = require("express");
@@ -29,17 +31,14 @@ function maskUri(uri) {
 // MONGODB CONNECTION
 // Note: recent Mongoose / MongoDB driver versions no longer accept
 // `useNewUrlParser` / `useUnifiedTopology` options; pass no deprecated options.
-mongoose.connect(connString, {
-  serverSelectionTimeoutMS: 5000
-})
+mongoose.connect(connString)
 .then(() => {
-  console.log("✅ MongoDB Atlas Connected Successfully");
-  console.log("Database:", mongoose.connection.name);
-  console.log("State:", mongoose.connection.readyState);
+  console.log("✅ MongoDB Connected");
+  console.log("DB:", mongoose.connection.name);
 })
 .catch((err) => {
-  console.error("❌ MongoDB Connection Error:", err);
-  console.log("Using connection string:", maskUri(connString));
+  console.error("❌ MongoDB FAILED");
+  console.error(err);
 });
 
 mongoose.connection.on('connected', () => {
@@ -57,8 +56,14 @@ mongoose.connection.on('disconnected', () => {
 app.get("/", (req, res) => {
   res.send("Backend Working & MongoDB Connected!");
 });
+app.get("/test123", (req, res) => {
+  res.send("INDEX ROUTE WORKING");
+});
+console.log("Mounting review routes...");
 app.use("/reviews", reviewRoutes);
+console.log("Review routes mounted");
 app.use("/media", mediaRoutes);
+
 
 const PORT = process.env.PORT || 1000;
 app.listen(PORT, () => {

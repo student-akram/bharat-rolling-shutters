@@ -29,27 +29,30 @@ function maskUri(uri) {
 // MONGODB CONNECTION
 // Note: recent Mongoose / MongoDB driver versions no longer accept
 // `useNewUrlParser` / `useUnifiedTopology` options; pass no deprecated options.
-mongoose.connect(connString)
-  .then(() => console.log("✅ MongoDB Atlas Connected Successfully"))
-  .catch((err) => {
-    console.error("❌ MongoDB Connection Error:", err && err.message ? err.message : err);
-    console.error("Full error:", err);
-    console.log("Using connection string:", maskUri(connString));
-    if (err && err.message && /authentication|auth/i.test(err.message)) {
-      console.error('Hint: Authentication failed. Check DB user, password and database name.');
-    }
-    if (err && err.message && /getaddrinfo|ENOTFOUND|ECONNREFUSED|DNS/i.test(err.message)) {
-      console.error('Hint: DNS or network error. Check network, firewall or try a non-SRV connection string.');
-    }
-  });
+mongoose.connect(connString, {
+  serverSelectionTimeoutMS: 5000
+})
+.then(() => {
+  console.log("✅ MongoDB Atlas Connected Successfully");
+  console.log("Database:", mongoose.connection.name);
+  console.log("State:", mongoose.connection.readyState);
+})
+.catch((err) => {
+  console.error("❌ MongoDB Connection Error:", err);
+  console.log("Using connection string:", maskUri(connString));
+});
+
+mongoose.connection.on('connected', () => {
+  console.log('🟢 Mongoose connected');
+});
 
 mongoose.connection.on('error', (err) => {
-  console.error('MongoDB connection error (event):', err);
-});
-mongoose.connection.on('disconnected', () => {
-  console.warn('MongoDB disconnected.');
+  console.error('🔴 MongoDB connection error:', err);
 });
 
+mongoose.connection.on('disconnected', () => {
+  console.warn('🟡 MongoDB disconnected');
+});
 // Test route
 app.get("/", (req, res) => {
   res.send("Backend Working & MongoDB Connected!");
